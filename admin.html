@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fr Roy Memorial Library Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        
+        header {
+            background-color: #1a2a6c;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .admin-options {
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .option-card {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid #1a2a6c;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-icon {
+            background-color: #1a2a6c;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 25px;
+            font-size: 1.8rem;
+        }
+        
+        .option-content {
+            flex: 1;
+        }
+        
+        .option-content h2 {
+            font-size: 1.8rem;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+        
+        .option-content p {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #1a2a6c;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn:hover {
+            background-color: #0d1a4a;
+        }
+        
+        footer {
+            background-color: #f1f1f1;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            background-color: #1a2a6c;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close:hover {
+            color: #fdbb2d;
+        }
+        
+        .modal-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .modal-footer {
+            background-color: #f1f1f1;
+            padding: 15px 20px;
+            border-radius: 0 0 10px 10px;
+            text-align: right;
+        }
+        
+        .modal-footer .btn {
+            background-color: #b21f1f;
+        }
+        
+        .modal-footer .btn:hover {
+            background-color: #8b1717;
+        }
+        
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .option-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .option-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                height: 90vh;
+                margin: 2% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fr Roy Memorial Library</h1>
+            <p>Administration Portal</p>
+        </header>
+        
+        <div class="admin-options">
+            <div class="option-card">
+                <div class="option-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="option-content">
+                    <h2>View Requests</h2>
+                    <p>Access and manage all library book requests submitted by users. View status, details, and take necessary actions.</p>
+                    <button class="btn" onclick="openModal('View Requests', 'https://docs.google.com/spreadsheets/d/1DnPvVE-yB9UcB2zdQEErhbmy8Xw50dZvUmfwjcu8-3U/edit?usp=sharing')">
+                        <i class="fas fa-external-link-alt"></i> Open Request Sheet
+                    </button>
+                </div>
+            </div>
+            
+            <div class="option-card">
+                <div class="option-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="option-content">
+                    <h2>Edit Book Details</h2>
+                    <p>Update and maintain the library catalog. Add new books, edit existing information, or remove outdated entries.</p>
+                    <button class="btn" onclick="openModal('Edit Book Details', 'https://docs.google.com/spreadsheets/d/1ahBZP_6O22DrhBVqSi9ygHdHkixM1G7Y3LJ4ysBkL7E/edit?usp=sharing')">
+                        <i class="fas fa-external-link-alt"></i> Open Book Catalog
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2023 Fr Roy Memorial Library | Admin Portal</p>
+        </footer>
+    </div>
+    
+    <!-- Modal -->
+    <div id="sheetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Sheet Title</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <iframe id="sheetFrame" src="" title="Google Sheet"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(title, url) {
+            document.getElementById("modalTitle").textContent = title;
+            document.getElementById("sheetFrame").src = url;
+            document.getElementById("sheetModal").style.display = "block";
+            document.body.style.overflow = "hidden"; // Prevent scrolling in background
+        }
+        
+        function closeModal() {
+            document.getElementById("sheetModal").style.display = "none";
+            document.body.style.overflow = "auto"; // Re-enable scrolling
+            document.getElementById("sheetFrame").src = ""; // Clear iframe to stop loading
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById("sheetModal");
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
