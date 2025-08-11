@@ -6,6 +6,7 @@
     <title>Fr Roy Memorial Library - Book Request</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* All existing styles remain the same */
         :root {
             --primary-color: #1a5276;
             --secondary-color: #2874a6;
@@ -128,6 +129,7 @@
             align-items: center;
             justify-content: center;
             gap: 1rem;
+            flex-direction: column;
         }
         
         .hero-icon {
@@ -145,7 +147,7 @@
         }
         
         .hero-text {
-            text-align: left;
+            text-align: center;
         }
         
         .hero h2 {
@@ -304,6 +306,7 @@
             display: flex;
             align-items: center;
             transition: background-color 0.3s;
+            flex-direction: row;
         }
         
         .book-item:hover {
@@ -372,6 +375,7 @@
         .book-actions {
             display: flex;
             gap: 0.5rem;
+            margin-left: 10px;
         }
         
         .btn {
@@ -701,6 +705,7 @@
             display: flex;
             gap: 1rem;
             align-items: flex-start;
+            flex-direction: column;
         }
         
         .book-details-cover {
@@ -713,6 +718,7 @@
             color: #999;
             overflow: hidden;
             flex-shrink: 0;
+            align-self: center;
         }
         
         .book-details-cover img {
@@ -730,12 +736,14 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--dark-color);
+            text-align: center;
         }
         
         .book-details-author {
             color: #666;
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
+            text-align: center;
         }
         
         .book-details-category {
@@ -746,12 +754,14 @@
             border-radius: 15px;
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
+            align-self: center;
         }
         
         .book-details-status {
             display: flex;
             align-items: center;
             margin-bottom: 0.5rem;
+            justify-content: center;
         }
         
         .book-details-table {
@@ -782,6 +792,7 @@
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
+            justify-content: center;
         }
         
         /* Form with blurred background */
@@ -798,7 +809,99 @@
             border-radius: 8px;
         }
         
+        /* Zoho Form Specific Styles */
+        .zoho-form {
+            background: transparent;
+        }
+        
+        .zoho-form h2 {
+            color: #1a2a6c;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
+        }
+        
+        .zoho-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .zoho-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1a2a6c;
+            font-weight: 600;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .zoho-form input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(26, 42, 108, 0.3);
+            border-radius: 6px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        
+        .zoho-form input[type="text"]:focus {
+            outline: none;
+            border-color: #1a2a6c;
+            box-shadow: 0 0 0 2px rgba(26, 42, 108, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .zoho-form button[type="submit"] {
+            background: linear-gradient(90deg, rgba(26, 42, 108, 0.8), rgba(44, 62, 80, 0.8));
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            font-weight: 600;
+            margin-top: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .zoho-form button[type="submit"]:hover {
+            background: linear-gradient(90deg, rgba(13, 26, 77, 0.9), rgba(26, 42, 108, 0.9));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.3);
+        }
+        
+        .name-fields {
+            display: flex;
+            gap: 15px;
+            flex-direction: column;
+        }
+        
+        .name-fields .form-group {
+            flex: 1;
+        }
+        
         /* Responsive adjustments */
+        @media (min-width: 576px) {
+            .book-item {
+                flex-direction: row;
+            }
+            
+            .book-details-header {
+                flex-direction: row;
+            }
+            
+            .book-details-title, .book-details-author {
+                text-align: left;
+            }
+            
+            .book-details-status, .book-details-category {
+                align-self: flex-start;
+            }
+        }
+        
         @media (min-width: 768px) {
             .container {
                 max-width: 720px;
@@ -839,6 +942,10 @@
             
             .logo {
                 margin-bottom: 1rem;
+            }
+            
+            .name-fields {
+                flex-direction: row;
             }
         }
         
@@ -946,33 +1053,54 @@
                     
                     <div id="notification" class="notification"></div>
                     
-                    <form id="bookRequestForm">
-                        <div class="form-group">
-                            <label for="firstName">Name <span class="required">*</span></label>
-                            <input type="text" id="firstName" name="firstName" required placeholder="Enter your full name">
+                    <!-- Zoho Form -->
+                    <form class="zoho-form" id="bookRequestForm" name='form' method='POST' accept-charset='UTF-8' enctype='multipart/form-data'>
+                        <!-- Hidden fields -->
+                        <input type="hidden" name="zf_referrer_name" value="">
+                        <input type="hidden" name="zc_gad" value="">
+                        
+                        <h2>Fr Roy Memorial Library Book Request</h2>
+                        <p></p>
+                        
+                        <!-- Name fields -->
+                        <div class="name-fields">
+                            <div class="form-group">
+                                <label> Name </label>
+                                <input type="text" maxlength="255" name="Name_First" fieldType=7 placeholder="First" />
+                                <label>First</label>
+                            </div>
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <input type="text" maxlength="255" name="Name_Last" fieldType=7 placeholder="Last" />
+                                <label>Last</label>
+                            </div>
                         </div>
                         
+                        <!-- Batch -->
                         <div class="form-group">
-                            <label for="bookTitle">Title <span class="required">*</span></label>
-                            <input type="text" id="bookTitle" name="bookTitle" required placeholder="Enter the book title">
+                            <label> Batch </label>
+                            <input type="text" name="SingleLine" value="" fieldType=1 maxlength="255" placeholder="Enter your batch" />
                         </div>
                         
+                        <!-- Book name -->
                         <div class="form-group">
-                            <label for="author">Author</label>
-                            <input type="text" id="author" name="author" placeholder="Enter the author's name">
+                            <label> Book name </label>
+                            <input type="text" name="SingleLine1" value="" fieldType=1 maxlength="255" placeholder="Enter the book title" />
                         </div>
                         
+                        <!-- Author -->
                         <div class="form-group">
-                            <label for="callNo">Call No</label>
-                            <input type="text" id="callNo" name="callNo" placeholder="Enter call number if known">
+                            <label> Author </label>
+                            <input type="text" name="SingleLine3" value="" fieldType=1 maxlength="255" placeholder="Enter the author's name" />
                         </div>
                         
+                        <!-- Call Number -->
                         <div class="form-group">
-                            <label for="reason">Reason for Request</label>
-                            <textarea id="reason" name="reason" placeholder="Why do you need this book?"></textarea>
+                            <label> Call Number </label>
+                            <input type="text" name="SingleLine2" value="" fieldType=1 maxlength="255" placeholder="Enter call number if known" />
                         </div>
                         
-                        <button type="submit">Submit Request</button>
+                        <button type="submit">Submit</button>
                     </form>
                     
                     <div class="form-footer">
@@ -1070,9 +1198,13 @@
                 console.log('Fetched data:', data);
                 
                 // Process the data from SheetDB
-                books = data.map(book => {
+                books = data.map((book, index) => {
+                    // Create a unique ID for each book
+                    const uniqueId = book.isbn || book.id || `book-${index}`;
+                    
                     // Handle different possible field names from SheetDB
                     return {
+                        id: uniqueId, // Use the unique ID we created
                         title: book.title || book.Title || book.bookTitle || book.name || 'Untitled',
                         author: book.author || book.Author || book.writer || 'Unknown Author',
                         coAuthors: book.coAuthors || book['Co-authors'] || book.co_authors || '',
@@ -1139,7 +1271,7 @@
                             ${statusHTML}
                         </div>
                         <div class="book-actions">
-                            <button class="btn btn-details" data-book-id="${book.isbn}">Details</button>
+                            <button class="btn btn-details" data-book-id="${book.id}">Details</button>
                         </div>
                     </div>
                 `;
@@ -1156,7 +1288,7 @@
         }
         // Show book details
         function showBookDetails(bookId) {
-            const book = books.find(b => b.isbn === bookId);
+            const book = books.find(b => b.id === bookId);
             if (!book) return;
             
             const bookDetailsContent = document.getElementById('bookDetailsContent');
@@ -1238,9 +1370,11 @@
                 // Open request form and pre-fill book details
                 document.getElementById('requestModal').classList.add('active');
                 document.body.style.overflow = 'hidden';
-                document.getElementById('bookTitle').value = bookTitle;
-                document.getElementById('author').value = author;
-                document.getElementById('callNo').value = callNo;
+                
+                // Pre-fill the form with book details
+                document.querySelector('input[name="SingleLine1"]').value = bookTitle;
+                document.querySelector('input[name="SingleLine3"]').value = author;
+                document.querySelector('input[name="SingleLine2"]').value = callNo;
             });
             
             // Open book details modal
@@ -1347,61 +1481,39 @@
         });
         // Event listeners
         searchInput.addEventListener('input', filterBooks);
-        // Form submission functionality
+        
+        // Form submission functionality for Zoho form
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('bookRequestForm');
             const notification = document.getElementById('notification');
-            
-            // Using the provided SheetDB endpoint
-            const sheetDBURL = 'https://sheetdb.io/api/v1/wtzmivzfk7mz5';
+            const zohoFormURL = 'https://forms.zohopublic.in/jijojohnsonk/form/Requestafreetrial/formperma/snfduQv5c051ssRfuQ1gwU7kylq2cK4RqGb4P132PTE/htmlRecords/submit';
             
             form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Get form data
-                const formData = new FormData(form);
-                
-                // Prepare data for SheetDB - using the correct format
-                const requestData = {
-                    name: formData.get('firstName'),
-                    bookTitle: formData.get('bookTitle'),
-                    author: formData.get('author'),
-                    callNo: formData.get('callNo'),
-                    reason: formData.get('reason'),
-                    requestDate: new Date().toISOString().split('T')[0],
-                    status: 'Pending'
-                };
+                e.preventDefault(); // Prevent default form submission
                 
                 // Show loading state
-                const submitButton = form.querySelector('button');
+                const submitButton = form.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.innerHTML;
                 submitButton.innerHTML = 'Submitting...';
                 submitButton.disabled = true;
                 
-                // Send data to SheetDB
-                fetch(sheetDBURL, {
+                // Get form data
+                const formData = new FormData(form);
+                
+                // Submit form data to Zoho using fetch
+                fetch(zohoFormURL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestData)
+                    body: formData,
+                    mode: 'no-cors' // This is needed for cross-origin requests
                 })
                 .then(response => {
-                    if (!response.ok) {
-                        // Try to get error details
-                        return response.text().then(text => {
-                            throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Success:', data);
+                    // Since we're using no-cors mode, we won't get a proper response
+                    // We'll just assume it was successful
                     showNotification('Your book request has been submitted successfully!', 'success');
-                    form.reset();
+                    form.reset(); // Reset form fields
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error submitting form:', error);
                     showNotification('There was an error submitting your request. Please try again.', 'error');
                 })
                 .finally(() => {

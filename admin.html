@@ -181,6 +181,7 @@
             flex: 1;
             padding: 0;
             overflow: hidden;
+            position: relative;
         }
         
         .modal-body iframe {
@@ -194,14 +195,63 @@
             padding: 15px 20px;
             border-radius: 0 0 10px 10px;
             text-align: right;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .modal-footer .btn {
             background-color: #b21f1f;
+            margin-left: 10px;
         }
         
         .modal-footer .btn:hover {
             background-color: #8b1717;
+        }
+        
+        .modal-footer .btn-primary {
+            background-color: #1a2a6c;
+        }
+        
+        .modal-footer .btn-primary:hover {
+            background-color: #0d1a4a;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 10;
+        }
+        
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1a2a6c;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            display: none;
+            padding: 20px;
+            text-align: center;
+            color: #b21f1f;
+            background-color: #f8d7da;
+            border-radius: 5px;
+            margin: 20px;
         }
         
         @media (max-width: 600px) {
@@ -224,6 +274,16 @@
                 height: 90vh;
                 margin: 2% auto;
             }
+            
+            .modal-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-footer .btn {
+                width: 100%;
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -242,7 +302,7 @@
                 <div class="option-content">
                     <h2>View Requests</h2>
                     <p>Access and manage all library book requests submitted by users. View status, details, and take necessary actions.</p>
-                    <button class="btn" onclick="openModal('View Requests', 'https://docs.google.com/spreadsheets/d/1DnPvVE-yB9UcB2zdQEErhbmy8Xw50dZvUmfwjcu8-3U/edit?usp=sharing')">
+                    <button class="btn" onclick="openModal('View Requests', 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMEZpuHH9Ao1Ec3qdgNyKetF2XzZlnsDE_xwTdyaS1Mv0bktJyreypWEe5cSLwGc9t2mzS4bahMIJr/pubhtml')">
                         <i class="fas fa-external-link-alt"></i> Open Request Sheet
                     </button>
                 </div>
@@ -275,20 +335,76 @@
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <iframe id="sheetFrame" src="" title="Google Sheet"></iframe>
+                <div class="loading" id="loadingSpinner">
+                    <div class="loading-spinner"></div>
+                </div>
+                <div class="error-message" id="errorMessage">
+                    <p><i class="fas fa-exclamation-triangle"></i> Unable to load the Google Sheet. This might be due to browser restrictions.</p>
+                    <p>Please use the "Open in New Tab" button below to access the sheet.</p>
+                </div>
+                <iframe id="sheetFrame" src="" title="Google Sheet" onload="hideLoading()" onerror="showError()"></iframe>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-primary" onclick="openInNewTab()">
+                    <i class="fas fa-external-link-alt"></i> Open in New Tab
+                </button>
                 <button class="btn" onclick="closeModal()">Close</button>
             </div>
         </div>
     </div>
 
     <script>
+        let currentSheetUrl = '';
+        
         function openModal(title, url) {
             document.getElementById("modalTitle").textContent = title;
-            document.getElementById("sheetFrame").src = url;
+            currentSheetUrl = url;
+            
+            // For published links, use them directly as they don't require sign-in
+            if (url.includes('/pubhtml')) {
+                document.getElementById("sheetFrame").src = url;
+            } else {
+                // Convert to embeddable URL for regular sheets
+                const embedUrl = convertToEmbedUrl(url);
+                document.getElementById("sheetFrame").src = embedUrl;
+            }
+            
             document.getElementById("sheetModal").style.display = "block";
             document.body.style.overflow = "hidden"; // Prevent scrolling in background
+            
+            // Show loading spinner
+            document.getElementById("loadingSpinner").style.display = "flex";
+            document.getElementById("errorMessage").style.display = "none";
+        }
+        
+        function convertToEmbedUrl(url) {
+            // Extract the spreadsheet ID from the URL
+            const regex = /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/;
+            const match = url.match(regex);
+            
+            if (match && match[1]) {
+                const sheetId = match[1];
+                // Return the embeddable URL
+                return `https://docs.google.com/spreadsheets/d/${sheetId}/pubhtml?widget=true&headers=false`;
+            }
+            
+            // If we can't extract the ID, return the original URL
+            return url;
+        }
+        
+        function hideLoading() {
+            document.getElementById("loadingSpinner").style.display = "none";
+        }
+        
+        function showError() {
+            document.getElementById("loadingSpinner").style.display = "none";
+            document.getElementById("errorMessage").style.display = "block";
+        }
+        
+        function openInNewTab() {
+            if (currentSheetUrl) {
+                window.open(currentSheetUrl, '_blank');
+            }
         }
         
         function closeModal() {
