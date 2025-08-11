@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fr Roy Memorial Library - Book Request</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a5276;
+            --secondary-color: #2874a6;
+            --accent-color: #3498db;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* App Header */
+        .app-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 36px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-actions button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-actions button:active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            background-color: white;
+            display: flex;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 70px;
+            z-index: 90;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .tab-nav::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Edge */
+        }
+        
+        .tab-item {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            padding: 12px 0;
+            color: #666;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .tab-item.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .tab-item i {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 15px 0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Search Box */
+        .search-container {
+            margin-bottom: 15px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        /* Book Cards */
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+        
+        .book-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .book-card:active {
+            transform: scale(0.98);
+        }
+        
+        .book-cover {
+            height: 200px;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .book-cover i {
+            font-size: 3rem;
+            color: #ccc;
+        }
+        
+        .book-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 3px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            color: var(--success-color);
+        }
+        
+        .status-unavailable {
+            color: var(--danger-color);
+        }
+        
+        .book-info {
+            padding: 12px;
+        }
+        
+        .book-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .book-author {
+            color: #666;
+            font-size: 0.85rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .book-category {
+            display: inline-block;
+            background-color: rgba(26, 82, 118, 0.1);
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-top: 6px;
+        }
+        
+        /* Request Button */
+        .request-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 90;
+            transition: all 0.3s;
+        }
+        
+        .request-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .nav-item i {
+            display: block;
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+        
+        .nav-item span {
+            font-size: 0.75rem;
+        }
+        
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(26, 82, 118, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: flex-end;
+            align-items: flex-end;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            width: 100%;
+            max-height: 85vh;
+            border-radius: 20px 20px 0 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 10;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:active {
+            background-color: #f1f1f1;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: white;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-color);
+        }
+        
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:active {
+            background-color: var(--secondary-color);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .notification.success {
+            background-color: var(--success-color);
+        }
+        
+        .notification.error {
+            background-color: var(--danger-color);
+        }
+        
+        /* Book Details */
+        .book-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .book-details-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .book-details-cover {
+            width: 100px;
+            height: 140px;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .book-details-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .book-details-info {
+            flex-grow: 1;
+        }
+        
+        .book-details-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .book-details-author {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .book-details-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .meta-item {
+            background-color: #f1f1f1;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .book-details-description {
+            margin-top: 15px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .book-details-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-outline {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-outline:active {
+            background-color: rgba(26, 82, 118, 0.1);
+        }
+        
+        /* Contact and Help Content */
+        .info-content {
+            line-height: 1.6;
+        }
+        
+        .info-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .info-content p {
+            margin-bottom: 15px;
+        }
+        
+        .info-content ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .info-content li {
+            margin-bottom: 8px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .contact-item i {
+            width: 30px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        /* Pull to Refresh */
+        .pull-to-refresh {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .pull-to-refresh i {
+            margin-right: 8px;
+            transition: transform 0.3s;
+        }
+        
+        .pull-to-refresh.refreshing i {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 500px;
+                margin: 0 auto;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .app-header {
+                top: 0;
+            }
+            
+            .tab-nav {
+                top: 70px;
+            }
+            
+            .request-btn {
+                bottom: 90px;
+                right: calc(50% - 250px + 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Header -->
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <img src="roy.png" alt="Fr Roy Memorial Library">
+                        <h1>Library</h1>
+                    </div>
+                    <div class="header-actions">
+                        <button id="searchToggle">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button id="profileBtn">
+                            <i class="fas fa-user"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <div class="tab-item active" data-tab="browse">
+                <i class="fas fa-book"></i>
+                <span>Browse</span>
+            </div>
+            <div class="tab-item" data-tab="categories">
+                <i class="fas fa-list"></i>
+                <span>Categories</span>
+            </div>
+            <div class="tab-item" data-tab="my-requests">
+                <i class="fas fa-bookmark"></i>
+                <span>My Requests</span>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Browse Tab -->
+            <div class="tab-content active" id="browse-tab">
+                <div class="container">
+                    <div class="search-container" id="searchContainer" style="display: none;">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search books...">
+                        </div>
+                    </div>
+                    
+                    <div class="pull-to-refresh" id="pullToRefresh">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Pull down to refresh</span>
+                    </div>
+                    
+                    <div class="book-grid" id="bookGrid">
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <p>Loading books...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Categories Tab -->
+            <div class="tab-content" id="categories-tab">
+                <div class="container">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="categorySearch" placeholder="Search categories...">
+                        </div>
+                    </div>
+                    
+                    <div class="category-grid" id="categoryGrid">
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <p>Loading categories...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- My Requests Tab -->
+            <div class="tab-content" id="my-requests-tab">
+                <div class="container">
+                    <div class="requests-list" id="requestsList">
+                        <div class="empty-state">
+                            <i class="fas fa-book-open"></i>
+                            <p>You don't have any requests yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Request Button -->
+        <button class="request-btn" id="requestBtn">
+            <i class="fas fa-plus"></i>
+        </button>
+        
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-tab="browse">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" data-tab="categories">
+                <i class="fas fa-th-large"></i>
+                <span>Categories</span>
+            </div>
+            <div class="nav-item" data-tab="my-requests">
+                <i class="fas fa-bookmark"></i>
+                <span>Requests</span>
+            </div>
+            <div class="nav-item" id="contactNav">
+                <i class="fas fa-phone"></i>
+                <span>Contact</span>
+            </div>
+            <div class="nav-item" id="helpNav">
+                <i class="fas fa-question-circle"></i>
+                <span>Help</span>
+            </div>
+        </nav>
+    </div>
+    
+    <!-- Request Form Modal -->
+    <div class="modal" id="requestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Request a Book</h3>
+                <button class="close-btn" id="closeRequestModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="bookRequestForm">
+                    <div class="form-group">
+                        <label for="firstName">Name <span style="color: var(--danger-color);">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookTitle">Book Title <span style="color: var(--danger-color);">*</span></label>
+                        <input type="text" id="bookTitle" name="bookTitle" required placeholder="Enter the book title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <input type="text" id="author" name="author" placeholder="Enter the author's name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="callNo">Call Number</label>
+                        <input type="text" id="callNo" name="callNo" placeholder="Enter call number if known">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Book Details Modal -->
+    <div class="modal" id="bookDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Book Details</h3>
+                <button class="close-btn" id="closeBookDetailsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="book-details" id="bookDetailsContent">
+                    <!-- Book details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Contact Us</h3>
+                <button class="close-btn" id="closeContactModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="info-content">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Our Lady of Rogate Ashram, Aluva</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+91 1234567890</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>library@frroy.edu</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Mon-Fri: 9:00 AM - 5:00 PM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Help & Support</h3>
+                <button class="close-btn" id="closeHelpModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="info-content">
+                    <h3>How to Request a Book</h3>
+                    <ol>
+                        <li>Browse our available books in the catalog</li>
+                        <li>Use search to find books you're interested in</li>
+                        <li>Tap the "+" button to open the request form</li>
+                        <li>Fill in your details and submit the request</li>
+                        <li>We'll notify you when your book is available</li>
+                    </ol>
+                    
+                    <h3>Frequently Asked Questions</h3>
+                    <p><strong>How long does it take to get a book?</strong><br>
+                    Typically, books are available within 2-3 working days.</p>
+                    
+                    <p><strong>Can I request multiple books?</strong><br>
+                    Yes, you can request up to 3 books at a time.</p>
+                    
+                    <p><strong>How long can I keep a book?</strong><br>
+                    Books can be borrowed for 14 days with one renewal option.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
+    <script>
+        // App initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
+            let books = [];
+            let filteredBooks = [];
+            let categories = [];
+            let startY = 0;
+            let currentY = 0;
+            let isRefreshing = false;
+            
+            // Tab navigation functionality
+            const tabItems = document.querySelectorAll('.tab-item');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            // Tab item click handler
+            tabItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                    
+                    // Update bottom nav
+                    navItems.forEach(navItem => {
+                        if (navItem.getAttribute('data-tab') === tabId) {
+                            navItem.classList.add('active');
+                        } else {
+                            navItem.classList.remove('active');
+                        }
+                    });
+                });
+            });
+            
+            // Bottom nav item click handler
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    if (tabId) {
+                        switchTab(tabId);
+                        
+                        // Update tab nav
+                        tabItems.forEach(tabItem => {
+                            if (tabItem.getAttribute('data-tab') === tabId) {
+                                tabItem.classList.add('active');
+                            } else {
+                                tabItem.classList.remove('active');
+                            }
+                        });
+                    } else if (this.id === 'contactNav') {
+                        openModal('contactModal');
+                    } else if (this.id === 'helpNav') {
+                        openModal('helpModal');
+                    }
+                });
+            });
+            
+            // Switch tab function
+            function switchTab(tabId) {
+                tabContents.forEach(content => {
+                    if (content.id === `${tabId}-tab`) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+                
+                // Load content for specific tabs
+                if (tabId === 'categories' && categories.length === 0) {
+                    loadCategories();
+                } else if (tabId === 'my-requests') {
+                    loadUserRequests();
+                }
+            }
+            
+            // Search toggle
+            const searchToggle = document.getElementById('searchToggle');
+            const searchContainer = document.getElementById('searchContainer');
+            
+            searchToggle.addEventListener('click', function() {
+                if (searchContainer.style.display === 'none') {
+                    searchContainer.style.display = 'block';
+                    document.getElementById('searchInput').focus();
+                } else {
+                    searchContainer.style.display = 'none';
+                }
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                if (searchTerm === '') {
+                    filteredBooks = [...books];
+                } else {
+                    filteredBooks = books.filter(book => {
+                        return book.title.toLowerCase().includes(searchTerm) || 
+                               book.author.toLowerCase().includes(searchTerm) ||
+                               book.description.toLowerCase().includes(searchTerm) ||
+                               book.subject.toLowerCase().includes(searchTerm);
+                    });
+                }
+                
+                renderBooks();
+            });
+            
+            // Pull to refresh functionality
+            const pullToRefresh = document.getElementById('pullToRefresh');
+            const contentArea = document.querySelector('.content-area');
+            
+            contentArea.addEventListener('touchstart', function(e) {
+                if (window.scrollY === 0) {
+                    startY = e.touches[0].pageY;
+                }
+            }, { passive: true });
+            
+            contentArea.addEventListener('touchmove', function(e) {
+                if (window.scrollY === 0 && !isRefreshing) {
+                    currentY = e.touches[0].pageY;
+                    const pullDistance = currentY - startY;
+                    
+                    if (pullDistance > 0) {
+                        e.preventDefault();
+                        pullToRefresh.style.height = `${Math.min(pullDistance, 80)}px`;
+                        
+                        if (pullDistance > 60) {
+                            pullToRefresh.querySelector('span').textContent = 'Release to refresh';
+                        } else {
+                            pullToRefresh.querySelector('span').textContent = 'Pull down to refresh';
+                        }
+                    }
+                }
+            }, { passive: false });
+            
+            contentArea.addEventListener('touchend', function() {
+                if (window.scrollY === 0 && !isRefreshing) {
+                    const pullDistance = currentY - startY;
+                    
+                    if (pullDistance > 60) {
+                        isRefreshing = true;
+                        pullToRefresh.classList.add('refreshing');
+                        pullToRefresh.querySelector('span').textContent = 'Refreshing...';
+                        
+                        // Simulate refresh
+                        setTimeout(() => {
+                            fetchBooks();
+                            pullToRefresh.style.height = '60px';
+                            pullToRefresh.classList.remove('refreshing');
+                            pullToRefresh.querySelector('span').textContent = 'Pull down to refresh';
+                            isRefreshing = false;
+                        }, 1500);
+                    } else {
+                        pullToRefresh.style.height = '60px';
+                    }
+                }
+            });
+            
+            // Request button
+            const requestBtn = document.getElementById('requestBtn');
+            requestBtn.addEventListener('click', function() {
+                openModal('requestModal');
+            });
+            
+            // Modal functionality
+            function openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Close modal buttons
+            document.getElementById('closeRequestModal').addEventListener('click', function() {
+                closeModal('requestModal');
+            });
+            
+            document.getElementById('closeBookDetailsModal').addEventListener('click', function() {
+                closeModal('bookDetailsModal');
+            });
+            
+            document.getElementById('closeContactModal').addEventListener('click', function() {
+                closeModal('contactModal');
+            });
+            
+            document.getElementById('closeHelpModal').addEventListener('click', function() {
+                closeModal('helpModal');
+            });
+            
+            // Close modal when clicking outside content
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+            
+            // Form submission
+            const bookRequestForm = document.getElementById('bookRequestForm');
+            bookRequestForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(this);
+                
+                // Prepare data for SheetDB
+                const requestData = {
+                    name: formData.get('firstName'),
+                    bookTitle: formData.get('bookTitle'),
+                    author: formData.get('author'),
+                    callNo: formData.get('callNo'),
+                    requestDate: new Date().toISOString().split('T')[0],
+                    status: 'Pending'
+                };
+                
+                // Show loading state
+                const submitButton = this.querySelector('button');
+                const originalButtonText = submitButton.innerHTML;
+                submitButton.innerHTML = 'Submitting...';
+                submitButton.disabled = true;
+                
+                // Send data to SheetDB
+                fetch('https://sheetdb.io/api/v1/wtzmivzfk7mz5', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showNotification('Your book request has been submitted successfully!', 'success');
+                    this.reset();
+                    closeModal('requestModal');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('There was an error submitting your request. Please try again.', 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitButton.innerHTML = originalButtonText;
+                    submitButton.disabled = false;
+                });
+            });
+            
+            // Show notification
+            function showNotification(message, type) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Fetch books from API
+            function fetchBooks() {
+                const bookGrid = document.getElementById('bookGrid');
+                bookGrid.innerHTML = `
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <p>Loading books...</p>
+                    </div>
+                `;
+                
+                fetch('https://sheetdb.io/api/v1/rztih6d14nh6o')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Process the data from SheetDB
+                        books = data.map(book => {
+                            return {
+                                title: book.title || book.Title || book.bookTitle || book.name || 'Untitled',
+                                author: book.author || book.Author || book.writer || 'Unknown Author',
+                                coAuthors: book.coAuthors || book['Co-authors'] || book.co_authors || '',
+                                publisher: book.publisher || book.Publisher || '',
+                                year: book.year || book.Year || book.publishYear || '',
+                                callNo: book.callNo || book['Call No'] || book.call_no || '',
+                                subject: book.subject || book.Subject || book.category || 'Uncategorized',
+                                tags: book.tags || book.Tags || '',
+                                category: book.category || book.Category || book.genre || book.type || 'Uncategorized',
+                                available: book.available !== undefined ? 
+                                          (book.available === 'true' || book.available === true || book.available === 'yes' || book.available === 'Yes') : 
+                                          (book.Available !== undefined ? 
+                                          (book.Available === 'true' || book.Available === true || book.Available === 'yes' || book.Available === 'Yes') : 
+                                          (book.status === 'available' || book.Status === 'Available')),
+                                isbn: book.isbn || book.ISBN || book.id || '',
+                                coverImage: book.coverImage || book.cover || book.image || book.imageUrl || '',
+                                description: book.description || book.Description || book.summary || book.about || 'No description available'
+                            };
+                        });
+                        
+                        filteredBooks = [...books];
+                        renderBooks();
+                        
+                        // Extract categories
+                        extractCategories();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching books:', error);
+                        bookGrid.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <p>Error loading books. Please try again later.</p>
+                            </div>
+                        `;
+                    });
+            }
+            
+            // Render books
+            function renderBooks() {
+                const bookGrid = document.getElementById('bookGrid');
+                
+                if (filteredBooks.length === 0) {
+                    bookGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <p>No books found matching your criteria.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const bookHTML = filteredBooks.map(book => {
+                    return `
+                        <div class="book-card" data-book-id="${book.isbn}">
+                            <div class="book-cover">
+                                ${book.coverImage ? 
+                                    `<img src="${book.coverImage}" alt="${book.title}">` : 
+                                    `<i class="fas fa-book"></i>`
+                                }
+                                <div class="book-status ${book.available ? 'status-available' : 'status-unavailable'}">
+                                    ${book.available ? 'Available' : 'Unavailable'}
+                                </div>
+                            </div>
+                            <div class="book-info">
+                                <h3 class="book-title">${book.title}</h3>
+                                <p class="book-author">${book.author}</p>
+                                <span class="book-category">${book.subject}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                bookGrid.innerHTML = bookHTML;
+                
+                // Add click event to book cards
+                document.querySelectorAll('.book-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const bookId = this.getAttribute('data-book-id');
+                        showBookDetails(bookId);
+                    });
+                });
+            }
+            
+            // Show book details
+            function showBookDetails(bookId) {
+                const book = books.find(b => b.isbn === bookId);
+                if (!book) return;
+                
+                const bookDetailsContent = document.getElementById('bookDetailsContent');
+                bookDetailsContent.innerHTML = `
+                    <div class="book-details-header">
+                        <div class="book-details-cover">
+                            ${book.coverImage ? 
+                                `<img src="${book.coverImage}" alt="${book.title}">` : 
+                                `<i class="fas fa-book" style="font-size: 3rem; color: #ccc;"></i>`
+                            }
+                        </div>
+                        <div class="book-details-info">
+                            <h3 class="book-details-title">${book.title}</h3>
+                            <p class="book-details-author">${book.author}</p>
+                            <div class="book-details-meta">
+                                <span class="meta-item">${book.subject}</span>
+                                <span class="meta-item">${book.year || 'N/A'}</span>
+                                <span class="meta-item ${book.available ? 'status-available' : 'status-unavailable'}">
+                                    ${book.available ? 'Available' : 'Unavailable'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="book-details-description">
+                        <h4>Description</h4>
+                        <p>${book.description}</p>
+                    </div>
+                    
+                    <div class="book-details-actions">
+                        <button class="btn btn-primary" id="requestThisBook" 
+                                data-book-title="${book.title}" 
+                                data-author="${book.author}" 
+                                data-call-no="${book.callNo}">
+                            Request This Book
+                        </button>
+                        <button class="btn btn-outline" id="shareBook">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                    </div>
+                `;
+                
+                // Add event listeners
+                document.getElementById('requestThisBook').addEventListener('click', function() {
+                    const bookTitle = this.getAttribute('data-book-title');
+                    const author = this.getAttribute('data-author');
+                    const callNo = this.getAttribute('data-call-no');
+                    
+                    closeModal('bookDetailsModal');
+                    openModal('requestModal');
+                    
+                    // Pre-fill form
+                    document.getElementById('bookTitle').value = bookTitle;
+                    document.getElementById('author').value = author;
+                    document.getElementById('callNo').value = callNo;
+                });
+                
+                document.getElementById('shareBook').addEventListener('click', function() {
+                    if (navigator.share) {
+                        navigator.share({
+                            title: book.title,
+                            text: `Check out this book: ${book.title} by ${book.author}`,
+                            url: window.location.href
+                        });
+                    } else {
+                        // Fallback for browsers that don't support Web Share API
+                        const shareText = `Check out this book: ${book.title} by ${book.author}`;
+                        
+                        // Create a temporary textarea to copy the text
+                        const textarea = document.createElement('textarea');
+                        textarea.value = shareText;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        
+                        showNotification('Book details copied to clipboard!', 'success');
+                    }
+                });
+                
+                openModal('bookDetailsModal');
+            }
+            
+            // Extract categories from books
+            function extractCategories() {
+                const categoryMap = {};
+                
+                books.forEach(book => {
+                    const subject = book.subject || 'Uncategorized';
+                    if (categoryMap[subject]) {
+                        categoryMap[subject]++;
+                    } else {
+                        categoryMap[subject] = 1;
+                    }
+                });
+                
+                categories = Object.keys(categoryMap).map(category => {
+                    return {
+                        name: category,
+                        count: categoryMap[category],
+                        icon: getCategoryIcon(category)
+                    };
+                });
+            }
+            
+            // Get icon for category
+            function getCategoryIcon(category) {
+                const categoryLower = category.toLowerCase();
+                
+                if (categoryLower.includes('science') || categoryLower.includes('physics') || categoryLower.includes('chemistry') || categoryLower.includes('biology')) {
+                    return 'fas fa-flask';
+                } else if (categoryLower.includes('math') || categoryLower.includes('statistics')) {
+                    return 'fas fa-calculator';
+                } else if (categoryLower.includes('history')) {
+                    return 'fas fa-landmark';
+                } else if (categoryLower.includes('literature') || categoryLower.includes('fiction') || categoryLower.includes('poetry')) {
+                    return 'fas fa-book-open';
+                } else if (categoryLower.includes('technology') || categoryLower.includes('computer') || categoryLower.includes('programming')) {
+                    return 'fas fa-laptop-code';
+                } else if (categoryLower.includes('art') || categoryLower.includes('design')) {
+                    return 'fas fa-palette';
+                } else if (categoryLower.includes('music')) {
+                    return 'fas fa-music';
+                } else if (categoryLower.includes('philosophy') || categoryLower.includes('psychology')) {
+                    return 'fas fa-brain';
+                } else if (categoryLower.includes('religion') || categoryLower.includes('theology')) {
+                    return 'fas fa-pray';
+                } else {
+                    return 'fas fa-book';
+                }
+            }
+            
+            // Load categories
+            function loadCategories() {
+                const categoryGrid = document.getElementById('categoryGrid');
+                
+                if (categories.length === 0) {
+                    categoryGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <p>No categories available</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const categoryHTML = categories.map(category => {
+                    return `
+                        <div class="book-card" data-category="${category.name}">
+                            <div class="book-cover">
+                                <i class="${category.icon}" style="font-size: 3rem; color: var(--primary-color);"></i>
+                            </div>
+                            <div class="book-info">
+                                <h3 class="book-title">${category.name}</h3>
+                                <p class="book-author">${category.count} books</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                categoryGrid.innerHTML = categoryHTML;
+                
+                // Add click event to category cards
+                document.querySelectorAll('[data-category]').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const categoryName = this.getAttribute('data-category');
+                        
+                        // Filter books by category
+                        filteredBooks = books.filter(book => book.subject === categoryName);
+                        
+                        // Switch to browse tab
+                        switchTab('browse');
+                        
+                        // Update tab nav
+                        tabItems.forEach(tabItem => {
+                            if (tabItem.getAttribute('data-tab') === 'browse') {
+                                tabItem.classList.add('active');
+                            } else {
+                                tabItem.classList.remove('active');
+                            }
+                        });
+                        
+                        // Update bottom nav
+                        navItems.forEach(navItem => {
+                            if (navItem.getAttribute('data-tab') === 'browse') {
+                                navItem.classList.add('active');
+                            } else {
+                                navItem.classList.remove('active');
+                            }
+                        });
+                        
+                        // Render filtered books
+                        renderBooks();
+                        
+                        // Update search input
+                        document.getElementById('searchInput').value = '';
+                        searchContainer.style.display = 'block';
+                    });
+                });
+            }
+            
+            // Category search
+            const categorySearch = document.getElementById('categorySearch');
+            categorySearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                const categoryGrid = document.getElementById('categoryGrid');
+                
+                if (searchTerm === '') {
+                    // Show all categories
+                    const categoryHTML = categories.map(category => {
+                        return `
+                            <div class="book-card" data-category="${category.name}">
+                                <div class="book-cover">
+                                    <i class="${category.icon}" style="font-size: 3rem; color: var(--primary-color);"></i>
+                                </div>
+                                <div class="book-info">
+                                    <h3 class="book-title">${category.name}</h3>
+                                    <p class="book-author">${category.count} books</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    categoryGrid.innerHTML = categoryHTML;
+                } else {
+                    // Filter categories
+                    const filteredCategories = categories.filter(category => 
+                        category.name.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    if (filteredCategories.length === 0) {
+                        categoryGrid.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-search"></i>
+                                <p>No categories found matching your search.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    const categoryHTML = filteredCategories.map(category => {
+                        return `
+                            <div class="book-card" data-category="${category.name}">
+                                <div class="book-cover">
+                                    <i class="${category.icon}" style="font-size: 3rem; color: var(--primary-color);"></i>
+                                </div>
+                                <div class="book-info">
+                                    <h3 class="book-title">${category.name}</h3>
+                                    <p class="book-author">${category.count} books</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    categoryGrid.innerHTML = categoryHTML;
+                }
+                
+                // Re-attach click events
+                document.querySelectorAll('[data-category]').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const categoryName = this.getAttribute('data-category');
+                        
+                        // Filter books by category
+                        filteredBooks = books.filter(book => book.subject === categoryName);
+                        
+                        // Switch to browse tab
+                        switchTab('browse');
+                        
+                        // Update tab nav
+                        tabItems.forEach(tabItem => {
+                            if (tabItem.getAttribute('data-tab') === 'browse') {
+                                tabItem.classList.add('active');
+                            } else {
+                                tabItem.classList.remove('active');
+                            }
+                        });
+                        
+                        // Update bottom nav
+                        navItems.forEach(navItem => {
+                            if (navItem.getAttribute('data-tab') === 'browse') {
+                                navItem.classList.add('active');
+                            } else {
+                                navItem.classList.remove('active');
+                            }
+                        });
+                        
+                        // Render filtered books
+                        renderBooks();
+                        
+                        // Update search input
+                        document.getElementById('searchInput').value = '';
+                        searchContainer.style.display = 'block';
+                    });
+                });
+            });
+            
+            // Load user requests (mock function)
+            function loadUserRequests() {
+                const requestsList = document.getElementById('requestsList');
+                
+                // In a real app, this would fetch from an API
+                // For now, we'll show a placeholder
+                requestsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <p>You don't have any requests yet</p>
+                        <button class="btn btn-primary" style="margin-top: 15px; width: auto; padding: 10px 20px;" onclick="openModal('requestModal')">
+                            Make a Request
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // Initialize the app
+            fetchBooks();
+        });
+    </script>
+</body>
+</html>
